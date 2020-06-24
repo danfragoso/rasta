@@ -3,11 +3,13 @@ package rasta
 import (
 	"image"
 	"image/png"
+	"io/ioutil"
 	"os"
 	"testing"
 )
 
 func TestReadPolygon(t *testing.T) {
+	triangle, _ := ioutil.ReadFile("assets/triangle.json")
 	polygon := ReadPolygon(triangle)
 
 	if polygon == nil {
@@ -26,34 +28,15 @@ func TestReadPolygon(t *testing.T) {
 }
 
 func TestRasterize(t *testing.T) {
+	star, _ := ioutil.ReadFile("assets/star.json")
 	img := image.NewRGBA(image.Rectangle{
 		image.Point{0, 0},
 		image.Point{300, 300},
 	})
 
-	polygon := ReadPolygon(triangle)
+	polygon := ReadPolygon(star)
 	Rasterize(polygon, img, image.Point{0, 0})
 
 	f, _ := os.Create("out.png")
 	png.Encode(f, img)
 }
-
-var triangle = []byte(`
-	{
-		"name": "triangle",
-		"points": [
-			{
-				"x": 150,
-				"y": 0
-			},
-			{
-				"x": 75,
-				"y": 200
-			},
-			{
-				"x": 225,
-				"y": 200
-			}
-		]
-	}`,
-)
